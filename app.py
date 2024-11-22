@@ -55,3 +55,4 @@ if selected_city:
             st.error(f"Hata: {data.get('error', {}).get('message', 'Bilinmeyen bir hata oluştu')}")
     except Exception as e:
         st.error(f"Bir hata oluştu: {e}")
+
