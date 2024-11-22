@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 
 # Sekme başlığı ve simgesi ayarları
 st.set_page_config(
-    page_title="Weather of the World",
+    page_title="Weather of Turkey",
     page_icon=":umbrella_with_rain_drops:"
 )
 
@@ -15,7 +15,15 @@ API_KEY = "f57182df55a24880b18120822242211"  # WeatherAPI'den aldığınız API 
 BASE_URL = "http://api.weatherapi.com/v1/forecast.json"
 
 # City list
-cities = ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya", "Adana", "Trabzon", "Diyarbakir"]
+# cities = ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya", "Adana", "Trabzon", "Diyarbakir"]
+cities = [
+    "Adana", "Adıyaman", "Afyonkarahisar", "Aksaray", "Amasya",
+    "Ankara", "Antalya", "Artvin", "Aydın", "Balıkesir",
+    "Bartın", "Batman", "Bayburt", "Bilecik", "Bingöl",
+    "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale",
+    "Çankırı", "Çorum", "Denizli", "Diyarbakır", "Düzce",
+    "Edirne", "Elazığ", "Erzincan", "Erzurum", "Eskişehir"
+]
 
 # Streamlit title and dropdown menu
 st.title("Weekly Weather Forecast")
