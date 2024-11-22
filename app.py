@@ -36,23 +36,31 @@ if selected_city:
         data = response.json()
         
         if response.status_code == 200:
-            # Hava durumu tahminlerini göster
-            st.subheader(f"{selected_city} için Haftalık Hava Durumu Tahmini")
+            # Hava durumu tahminlerini tabloya hazırlama
             forecast_days = data["forecast"]["forecastday"]
-            
+            weather_data = []
+
             for day in forecast_days:
                 date = day["date"]
                 condition = day["day"]["condition"]["text"]
                 max_temp = day["day"]["maxtemp_c"]
                 min_temp = day["day"]["mintemp_c"]
-                
-                st.write(f"📅 **{date}**")
-                st.write(f"- Durum: {condition}")
-                st.write(f"- En Yüksek Sıcaklık: {max_temp}°C")
-                st.write(f"- En Düşük Sıcaklık: {min_temp}°C")
-                st.write("---")  # Bölme çizgisi
+
+                weather_data.append({
+                    "Tarih": date,
+                    "Durum": condition,
+                    "En Yüksek Sıcaklık (°C)": max_temp,
+                    "En Düşük Sıcaklık (°C)": min_temp
+                })
+
+            # DataFrame'e dönüştürme
+            df = pd.DataFrame(weather_data)
+            df.set_index("Tarih", inplace=True)
+
+            # Tabloyu gösterme
+            st.subheader(f"{selected_city} için Haftalık Hava Durumu Tahmini")
+            st.table(df)  # Tablo olarak gösterim
         else:
             st.error(f"Hata: {data.get('error', {}).get('message', 'Bilinmeyen bir hata oluştu')}")
     except Exception as e:
         st.error(f"Bir hata oluştu: {e}")
-
