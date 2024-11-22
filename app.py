@@ -35,19 +35,15 @@ cities = [
     "76 Iğdır", "77 Yalova", "78 Karabük", "79 Kilis", "80 Osmaniye", "81 Düzce"
 ]
 
-# Şehir seçimi
-selected_city = st.selectbox("Choose a city (with plate number):", cities)
-
-# Şehir adını seçmek için plaka numarasını kaldırma
-selected_city_name = " ".join(selected_city.split(" ")[1:])  # "01 Adana" -> "Adana"
-
-
 # Streamlit title and dropdown menu
 st.title("Weekly Weather Forecast")
 st.write("Select a city from the dropdown menu to see the weekly weather forecast in a table and a graph.")
 
 # City selection
 selected_city = st.selectbox("Choose a city:", cities)
+
+# Şehir adını seçmek için plaka numarasını kaldırma
+selected_city_name = " ".join(selected_city.split(" ")[1:])  # "01 Adana" -> "Adana"
 
 if selected_city:
     # API parametreleri
