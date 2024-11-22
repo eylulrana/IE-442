@@ -73,9 +73,9 @@ if selected_city:
                 unsafe_allow_html=True
             )
 
-            # Display line chart
+            # Display line chart with "Day" as X-axis
             st.subheader("Temperature Trends")
-            st.line_chart(df[["Max Temp (°C)", "Min Temp (°C)"]])
+            st.line_chart(df.set_index("Day")[["Max Temp (°C)", "Min Temp (°C)"]])
         else:
             st.error(f"Error: {data.get('error', {}).get('message', 'Unknown error occurred')}")
     except Exception as e:
