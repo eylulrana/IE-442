@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import pandas as pd
 
 # Sekme başlığı ve simgesi ayarları
 st.set_page_config(
