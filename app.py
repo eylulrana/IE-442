@@ -50,8 +50,7 @@ if selected_city:
 
                 weather_data.append({
                     "Date": date,
-                    "Condition": condition,
-                    "Icon": icon_url,
+                    "Condition": f"{condition} <img src='{icon_url}' width='30' style='vertical-align:middle;'>",
                     "Max Temp (°C)": max_temp,
                     "Min Temp (°C)": min_temp
                 })
@@ -59,18 +58,16 @@ if selected_city:
             # Convert to DataFrame
             df = pd.DataFrame(weather_data)
 
-            # Display table without icons
-            st.subheader(f"Weekly Weather Forecast for {selected_city}")
-            st.table(df[["Date", "Condition", "Max Temp (°C)", "Min Temp (°C)"]])
+            # Create an HTML table for proper rendering of icons
+            def render_html_table(dataframe):
+                return dataframe.to_html(escape=False, index=False)
 
-            # Display icons separately
-            st.subheader("Weather Conditions with Icons")
-            for index, row in df.iterrows():
-                st.markdown(
-                    f"**{row['Date']}**: {row['Condition']} "
-                    f"<img src='{row['Icon']}' width='50' style='vertical-align:middle;'>",
-                    unsafe_allow_html=True
-                )
+            # Display table
+            st.subheader(f"Weekly Weather Forecast for {selected_city}")
+            st.markdown(
+                render_html_table(df),
+                unsafe_allow_html=True
+            )
 
             # Display line chart
             st.subheader("Temperature Trends")
