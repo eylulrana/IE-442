@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
+from datetime import datetime
 
 # Sekme başlığı ve simgesi ayarları
 st.set_page_config(
@@ -43,6 +44,8 @@ if selected_city:
 
             for day in forecast_days:
                 date = day["date"]
+                day_name = datetime.strptime(date, "%Y-%m-%d").strftime("%A")  # Haftanın gününü al
+
                 condition = day["day"]["condition"]["text"]
                 icon_url = day["day"]["condition"]["icon"]  # Weather icon
                 max_temp = round(day["day"]["maxtemp_c"], 1)  # Round to 1 decimal
@@ -50,6 +53,7 @@ if selected_city:
 
                 weather_data.append({
                     "Date": date,
+                    "Day": day_name,  # Haftanın günü
                     "Condition": f"<img src='{icon_url}' width='30' style='vertical-align:middle;'> {condition}",
                     "Max Temp (°C)": max_temp,
                     "Min Temp (°C)": min_temp
