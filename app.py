@@ -87,7 +87,7 @@ if selected_city:
             def render_html_table(dataframe):
                 return dataframe.to_html(escape=False, index=False)
 
-            st.subheader(f"Weekly Weather Forecast for {selected_city}")
+            st.subheader(f"Weekly Weather Forecast for {selected_city_name}")
             st.markdown(render_html_table(df), unsafe_allow_html=True)
 
             # Plotly ile grafik oluşturma
