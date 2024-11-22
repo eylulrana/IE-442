@@ -12,56 +12,60 @@ st.set_page_config(
 API_KEY = "f57182df55a24880b18120822242211"  # WeatherAPI'den aldığınız API Key
 BASE_URL = "http://api.weatherapi.com/v1/forecast.json"
 
-# Şehir listesi (örnek olarak bazı şehirler)
-cities = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Trabzon", "Diyarbakır"]
+# City list
+cities = ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya", "Adana", "Trabzon", "Diyarbakir"]
 
-# Streamlit başlık ve seçim menüsü
-st.title("Haftalık Hava Durumu Tahmini")
-st.write("Aşağıdaki listeden bir şehir seçerek hava durumu tahminini görebilirsiniz.")
+# Streamlit title and dropdown menu
+st.title("Weekly Weather Forecast")
+st.write("Select a city from the dropdown menu to see the weekly weather forecast in a table and a graph.")
 
-# Şehir seçimi
-selected_city = st.selectbox("Bir şehir seçin:", cities)
+# City selection
+selected_city = st.selectbox("Choose a city:", cities)
 
 if selected_city:
-    # API isteği için parametreler
+    # API request parameters
     params = {
         "key": API_KEY,
         "q": selected_city,
-        "days": 7,  # 7 günlük tahmin
-        "lang": "tr"
+        "days": 7,  # 7-day forecast
+        "lang": "en"  # English language
     }
     
     try:
-        # API isteği
+        # API request
         response = requests.get(BASE_URL, params=params)
         data = response.json()
         
         if response.status_code == 200:
-            # Hava durumu tahminlerini tabloya hazırlama
+            # Prepare weather forecast data
             forecast_days = data["forecast"]["forecastday"]
             weather_data = []
 
             for day in forecast_days:
                 date = day["date"]
                 condition = day["day"]["condition"]["text"]
+                icon_url = day["day"]["condition"]["icon"]  # Weather icon
                 max_temp = day["day"]["maxtemp_c"]
                 min_temp = day["day"]["mintemp_c"]
 
                 weather_data.append({
-                    "Tarih": date,
-                    "Durum": condition,
-                    "En Yüksek Sıcaklık (°C)": max_temp,
-                    "En Düşük Sıcaklık (°C)": min_temp
+                    "Date": date,
+                    "Condition": f"{condition} ![icon]({icon_url})",
+                    "Max Temp (°C)": max_temp,
+                    "Min Temp (°C)": min_temp
                 })
 
-            # DataFrame'e dönüştürme
+            # Convert to DataFrame
             df = pd.DataFrame(weather_data)
-            df.set_index("Tarih", inplace=True)
 
-            # Tabloyu gösterme
-            st.subheader(f"{selected_city} için Haftalık Hava Durumu Tahmini")
-            st.table(df)  # Tablo olarak gösterim
+            # Display table
+            st.subheader(f"Weekly Weather Forecast for {selected_city}")
+            st.table(df)  # Display as a table
+
+            # Display line chart
+            st.subheader("Temperature Trends")
+            st.line_chart(df[["Max Temp (°C)", "Min Temp (°C)"]])
         else:
-            st.error(f"Hata: {data.get('error', {}).get('message', 'Bilinmeyen bir hata oluştu')}")
+            st.error(f"Error: {data.get('error', {}).get('message', 'Unknown error occurred')}")
     except Exception as e:
-        st.error(f"Bir hata oluştu: {e}")
+        st.error(f"An error occurred: {e}")
