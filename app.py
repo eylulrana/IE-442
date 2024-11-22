@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd
 from datetime import datetime
+import plotly.graph_objects as go
 
 # Sekme başlığı ve simgesi ayarları
 st.set_page_config(
@@ -24,32 +25,31 @@ st.write("Select a city from the dropdown menu to see the weekly weather forecas
 selected_city = st.selectbox("Choose a city:", cities)
 
 if selected_city:
-    # API request parameters
+    # API parametreleri
     params = {
         "key": API_KEY,
         "q": selected_city,
-        "days": 7,  # 7-day forecast
-        "lang": "en"  # English language
+        "days": 7,  # 7 günlük tahmin
+        "lang": "en"  # Dil: İngilizce
     }
-    
+
     try:
-        # API request
+        # API isteği
         response = requests.get(BASE_URL, params=params)
         data = response.json()
         
         if response.status_code == 200:
-            # Prepare weather forecast data
+            # Hava durumu tahminlerini işleme
             forecast_days = data["forecast"]["forecastday"]
             weather_data = []
 
             for day in forecast_days:
                 date = day["date"]
-                day_name = datetime.strptime(date, "%Y-%m-%d").strftime("%A")  # Haftanın gününü al
-
+                day_name = datetime.strptime(date, "%Y-%m-%d").strftime("%A")  # Haftanın günü
                 condition = day["day"]["condition"]["text"]
-                icon_url = day["day"]["condition"]["icon"]  # Weather icon
-                max_temp = round(day["day"]["maxtemp_c"], 1)  # Round to 1 decimal
-                min_temp = round(day["day"]["mintemp_c"], 1)  # Round to 1 decimal
+                icon_url = day["day"]["condition"]["icon"]  # Hava durumu ikonu
+                max_temp = round(day["day"]["maxtemp_c"], 1)  # En yüksek sıcaklık
+                min_temp = round(day["day"]["mintemp_c"], 1)  # En düşük sıcaklık
 
                 weather_data.append({
                     "Date": date,
@@ -59,23 +59,48 @@ if selected_city:
                     "Min Temp (°C)": min_temp
                 })
 
-            # Convert to DataFrame
+            # DataFrame'e dönüştürme
             df = pd.DataFrame(weather_data)
 
-            # Create an HTML table for proper rendering of icons
+            # Tabloyu HTML ile gösterme
             def render_html_table(dataframe):
                 return dataframe.to_html(escape=False, index=False)
 
-            # Display table
             st.subheader(f"Weekly Weather Forecast for {selected_city}")
-            st.markdown(
-                render_html_table(df),
-                unsafe_allow_html=True
+            st.markdown(render_html_table(df), unsafe_allow_html=True)
+
+            # Plotly ile grafik oluşturma
+            fig = go.Figure()
+
+            fig.add_trace(
+                go.Scatter(
+                    x=df["Day"],  # X ekseni haftanın günleri
+                    y=df["Max Temp (°C)"],
+                    mode="lines+markers",
+                    name="Max Temp (°C)"
+                )
             )
 
-            # Display line chart with "Day" as X-axis
-            st.subheader("Temperature Trends")
-            st.line_chart(df.set_index("Day")[["Max Temp (°C)", "Min Temp (°C)"]])
+            fig.add_trace(
+                go.Scatter(
+                    x=df["Day"],  # X ekseni haftanın günleri
+                    y=df["Min Temp (°C)"],
+                    mode="lines+markers",
+                    name="Min Temp (°C)"
+                )
+            )
+
+            # Ekseni yatay olarak etiketleme
+            fig.update_layout(
+                title="Temperature Trends",
+                xaxis_title="Day",
+                yaxis_title="Temperature (°C)",
+                xaxis=dict(tickangle=0),  # X ekseni etiketlerini yatay göster
+                template="simple_white"
+            )
+
+            # Grafiği Streamlit'te göster
+            st.plotly_chart(fig)
         else:
             st.error(f"Error: {data.get('error', {}).get('message', 'Unknown error occurred')}")
     except Exception as e:
