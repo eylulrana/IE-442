@@ -50,7 +50,7 @@ if selected_city:
 
                 weather_data.append({
                     "Date": date,
-                    "Condition": f"<img src='{icon_url}' width='30' style='vertical-align:middle; margin-right:10px;'>{condition}",
+                    "Condition": f"{condition} <img src='{icon_url}' width='30' style='vertical-align:middle;'>",
                     "Max Temp (°C)": max_temp,
                     "Min Temp (°C)": min_temp
                 })
@@ -58,30 +58,9 @@ if selected_city:
             # Convert to DataFrame
             df = pd.DataFrame(weather_data)
 
-            # Create an HTML table for proper rendering of icons and alignment
+            # Create an HTML table for proper rendering of icons
             def render_html_table(dataframe):
-                # Convert DataFrame to HTML
-                html_table = dataframe.to_html(escape=False, index=False)
-
-                # Add CSS styles for center alignment
-                styled_table = f"""
-                <style>
-                    table {{
-                        width: 100%;
-                        border-collapse: collapse;
-                    }}
-                    th, td {{
-                        text-align: center;
-                        padding: 8px;
-                        border: 1px solid #ddd;
-                    }}
-                    th {{
-                        background-color: #f4f4f4;
-                    }}
-                </style>
-                {html_table}
-                """
-                return styled_table
+                return dataframe.to_html(escape=False, index=False)
 
             # Display table
             st.subheader(f"Weekly Weather Forecast for {selected_city}")
