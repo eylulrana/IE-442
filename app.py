@@ -50,7 +50,7 @@ if selected_city:
 
                 weather_data.append({
                     "Date": date,
-                    "Condition": f"{condition} <img src='{icon_url}' width='30' style='vertical-align:middle;'>",
+                    "Condition": f"<img src='{icon_url}' width='30' style='vertical-align:middle;'> {condition}",
                     "Max Temp (°C)": max_temp,
                     "Min Temp (°C)": min_temp
                 })
